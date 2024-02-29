@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/player/[id].jsx", "src/pages/setting.jsx", "src/pages/foryou.jsx", "components/foryou/Sidebar.js", "components/foryou/SearchBar.js", "components/foryou/Recommended.jsx", "components/foryou/Suggested.jsx", "src/pages/book/[id].jsx", "components/foryou/SelectedBook.jsx"],
+  "exclude": ["node_modules"]
+}
