@@ -9,15 +9,19 @@ export default function Suggested() {
 
   const [durations, setDurations] = useState({});
   const durationsRef = useRef({});
-
   const [bookData, setBookData] = useState([]);
+  const [loading, setloading] = useState(false);
 
   async function getBookData() {
+    setloading(true)
     const url =
       "https://us-central1-summaristt.cloudfunctions.net/getBooks?status=suggested";
     const response = await fetch(url);
     const data = await response.json();
     setBookData(data);
+    setTimeout(() => {
+      setloading(false);
+    }, 2000);
   }
 
   useEffect(() => {
@@ -47,6 +51,26 @@ export default function Suggested() {
       <div className="mx-auto mb-10 ml-0 md:max-w-[1100px] md:w-[calc(100vw-400px)] w-[calc(100vw-100px)]">
         <h1 className="font-bold text-xl mb-2 mt-2">Suggested for you</h1>
         <h3 className="text-l  mt-2 mb-2"> We'll think you'll like these</h3>
+        {loading? (
+          <div className="overflow-x-scroll flex max-w-[1200px] w-[100%]" >
+          {new Array(7).fill("").map((book, index) => (
+          <div className="relative pt-7 mx-3 min-w-[200px] pb-10 " key={index}>
+            <div className="w-[150px] h-[200px] bg-[#959c9f]" />
+            <div className="my-2 w-[130px] h-[20px] bg-[#959c9f]" />
+            <div className="my-2 w-[110px] h-[20px] bg-[#959c9f]" />
+            <div className="my-2 w-[120px] h-[20px] bg-[#959c9f]" />
+            <div className="flex items-center gap-1">
+              <BsClock />
+              <div className="my-2 w-[40px] h-[20px] bg-[#959c9f]" />
+              <AiOutlineStar />
+              <div className="my-2 w-[40px] h-[20px] bg-[#959c9f]" />
+            </div>
+          </div>
+          ))}
+            </div>
+          
+        ) : (
+
         <div className="overflow-x-scroll flex max-w-[1200px] w-[100%]">
           {bookData.map((book, index) => (
             <Link
@@ -87,6 +111,7 @@ export default function Suggested() {
             </Link>
           ))}
         </div>
+        )}
       </div>
     </>
   );

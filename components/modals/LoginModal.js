@@ -73,11 +73,12 @@ function LoginModal() {
         className="flex justify-center items-center"
       >
         <div
-          className="w-[60%]
+          className="w-[60%] relative
         bg-white text-black md:w-[400px] h-fit
          border border-gray-700 rounded-lg flex flex-col text-center justify-center
          "
         >
+          <button className="absolute top-3 right-5 " onClick={() => dispatch(closeLoginModal())}>X</button>
           <div className="p-[24px] flex flex-col space-y-5 ">
             <h2 className="text-lg font-bold text-[#032b41] mb-[24px] mt-6">
               Log in to Summarist
@@ -86,7 +87,7 @@ function LoginModal() {
                 <p className="text-red-600 p-0 m-0 bg-red-200 rounded-md">{error}</p>
               )}
             
-            <div className="bg-[#3a579d] flex items-center cursor-pointer p-1 rounded-md hover:bg-gray-500 transition duration-300 ease-in-out ">
+            <div className="bg-[#3a579d] flex items-center cursor-pointer p-1 rounded-md hover:bg-sky-500 transition duration-300 ease-in-out ">
               {" "}
               <svg
                 stroke="currentColor"
@@ -100,7 +101,7 @@ function LoginModal() {
               >
                 <path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"></path>
               </svg>
-              {/* <Link href={"/foryou"}> */}
+              
               <h3
                 className="ml-20 text-white "
                 onClick={handleGuestLogin}
@@ -108,26 +109,11 @@ function LoginModal() {
                 Login as Guest
                 
               </h3>
-                {/* </Link> */}
+                
             </div>
             <h3>or</h3>
-            <div className=" bg-[#4285f4] flex items-center cursor-pointer p-1 rounded-md hover:bg-gray-500 transition duration-300 ease-in-out">
-              <img
-                src="/assets/google.png"
-                className="w-9 bg-white p-1 rounded-md"
-              />
-              <h3
-                className="ml-20 text-white rounded-md"
-                // onClick={handleGoogleSignIn}
-              >
-                Login with Google
-              </h3>
-            </div>
-            <h2>
-            {/* {(error && !email && !password) && (
-                <p className="text-red-600 p-0 m-0 bg-red-200 rounded-md">{error}</p>
-              )} */}
-            </h2>
+            
+            
             <input
               className="w-[100%] h-[36px] border-2 border-solid boder-gray-300 rounded-md p-3"
               onChange={(e) => setEmail(e.target.value)}
@@ -145,21 +131,21 @@ function LoginModal() {
             />
            
             <button
-              className="w-[100%] bg-[#2bd97c] h-[40px] rounded-md hover:bg-gray-300 transition duration-300 ease-in-out"
+              className="w-[100%] bg-[#2bd97c] h-[40px] rounded-md hover:bg-[#24ba6a] transition duration-300 ease-in-out"
               onClick={handleLogin}
               >
               Login
               
             </button>
             
-            <button className="w-[100%]">Forgot your password</button>
             <button
-              className="w-[100%]"
+              className="w-[100%] h-[40px] bg-slate-300 hover:bg-slate-400 rounded-md"
               onClick={toggleToSignUpModal}
             >
               Don't have an account{" "}
             </button>
           </div>
+        
         </div>
       </Modal>
 

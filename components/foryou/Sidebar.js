@@ -1,5 +1,5 @@
 
-'use client'
+// 'use client'
 import Link from "next/link";
 import { AiFillCiCircle, AiFillHome } from "react-icons/ai";
 import { BiHelpCircle, BiLogOut, BiPencil } from "react-icons/bi";

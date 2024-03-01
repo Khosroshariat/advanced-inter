@@ -1,4 +1,3 @@
-// "use client";
 
 import { auth } from "../../firebase";
 import { signOut } from "firebase/auth";
@@ -18,47 +17,59 @@ import { RxCross1 } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import { signOutUser } from "../../redux/userSlice";
 import { openLoginModal } from "../../redux/modalSlice";
-
+import { useDebounce } from "@uidotdev/usehooks";
+import SignupModal from "../../components/modals/SignupModal";
 
 export default function SearchBar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  
   const user = useSelector((state) => state.user.email);
-  const [results, setresults] = ([]);
-  
-  const [searchTerm, setSearchTerm] = useState("")
   const dispatch = useDispatch();
-  
+  const [loading, setloading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const debouncedSearchTerm = useDebounce(searchTerm, 100);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setloading(true);
+        const response = await fetch(
+          `https://us-central1-summaristt.cloudfunctions.net/getBooksByAuthorOrTitle?search=${debouncedSearchTerm}`
+        );
+        const data = await response.json();
+        setSearchResults(data);
+        setTimeout(() => {
+          setloading(false);
+        }, 2000);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (debouncedSearchTerm.trim() !== "") {
+      fetchData();
+    } else {
+      setSearchResults([]);
+    }
+  }, [debouncedSearchTerm]);
+
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
- 
-    
-  async function searchBook () {
+  const removeInput = () => {
+    setSearchTerm("");
+  };
 
-    try {
-      const response = await fetch(`https://us-central1-summaristt.cloudfunctions.net/getBooksByAuthorOrTitle?search=${searchTerm}`)
-      const data = await response.json();
-      console.log(data)
-      setresults(data)
-    } catch (error) {
-      // console.error("Error fetching data");
-      
-    }
-    
-  }
-  
-      async function handleSignOut() {
-      await signOut(auth);
+  async function handleSignOut() {
+    await signOut(auth);
     dispatch(signOutUser());
   }
-
-  
 
   return (
     <>
       <div>
+        <SignupModal/>
         <div className="bg-[#fff] border-b border-[#e1e7ea] h-[80px] z-1">
           <div className="flex items-center justify-between px-[32px] max-w-[1070px] mx-auto h-[100%]">
             <figure></figure>
@@ -71,33 +82,65 @@ export default function SearchBar() {
                   value={searchTerm}
                   onChange={handleInputChange}
                 />
-                <div
-                 className="absolute right-0 border-l-[2px] border-[#e1e7ea] p-[10px] cursor-pointer">
-                  <AiOutlineSearch className="w-[40px] "
-                  onClick={searchBook} />
-                </div>
 
-                {/* {results.map((result, index) => (
-                  
-                ))} */}
-                <div className="absolute w-full flex right-0 top-16 rounded-sm border-[2px] border-[#afb2b4] p-[10px] bg-gray-100">
-                <div className="mb-2 w-[150px] px-5">
-                  <img 
-                  src="https://firebasestorage.googleapis.com/v0/b/summaristt.appspot.com/o/books%2Fimages%2Fthe-lean-startup.png?alt=media&token=087bb342-71d9-4c07-8b0d-4dd1f06a5aa2" 
-                  alt="bookImg" />
-                </div>
-                <div>
-                <div className="text-base font-bold text-black mb-2 ">
-                  Title
-                </div>
-                <div className="text-sm text-gray-400 font-light mb-2  ">
-                  Author
-                </div>
-                </div>
-                </div>
-         
-             
+                {searchTerm ? (
+                  <div className="absolute right-0 border-l-[2px] border-[#e1e7ea] p-[10px] cursor-pointer">
+                    <RxCross1 className="w-[40px] " onClick={removeInput} />
+                  </div>
+                ) : (
+                  <div className="absolute right-0 border-l-[2px] border-[#e1e7ea] p-[10px] cursor-pointer">
+                    <AiOutlineSearch className="w-[40px] " />
+                  </div>
+                )}
 
+                {searchTerm ? (
+                  <div>
+                    {searchResults.length > 0 ? (
+                      <div>
+                        {loading ? (
+                          <div className="absolute w-full max-h-[360px] overflow-y-scroll right-0 top-16 rounded-sm border-[2px] border-[#afb2b4] p-[10px] bg-gray-100">
+                            {new Array(3).fill("").map((book, index) => (
+                          <div className="relative pb-10 flex items-center " key={index}>
+                            <div className="w-[100px] h-[140px] bg-[#959c9f]" />
+                            <div className="ml-7">
+                              <div className="my-2 w-[130px] h-[20px] bg-[#959c9f]" />
+                              <div className="my-2 w-[110px] h-[20px] bg-[#959c9f]" />
+                            </div>
+                          </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="absolute w-full max-h-[360px] overflow-y-scroll right-0 top-16 rounded-sm border-[2px] border-[#afb2b4] p-[10px] bg-gray-100">
+                            {searchResults.map((results, index) => (
+                              <Link href={"/book/" + results.id} key={index}>
+                                <div className="flex items-center w-full">
+                                  <div className="mb-4 w-[100px]">
+                                    <img
+                                      src={results.imageLink}
+                                      alt="bookImg"
+                                    />
+                                  </div>
+                                  <div className="ml-6">
+                                    <h5 className="text-xs font-bold text-black mb-2">
+                                      Type: {results.type}
+                                    </h5>
+                                    <p className="text-sm text-gray-400 font-light mb-2">
+                                      {results.author}
+                                    </p>
+                                  </div>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="absolute w-full right-0 top-16 rounded-sm border-[2px] border-[#afb2b4] p-[10px] bg-gray-100">
+                        No books found!
+                      </div>
+                    )}
+                  </div>
+                ) : null}
               </div>
             </div>
             <div className="md:hidden">

@@ -28,7 +28,7 @@ export async function getServerSideProps(context) {
 export default function Book({ id }) {
   const user = useSelector((state) => state.user.email);
   const dispatch = useDispatch();
-
+  const [loading, setloading] = useState(false);
   const [durations, setDurations] = useState({});
   const durationsRef = useRef({});
 
@@ -48,10 +48,14 @@ export default function Book({ id }) {
 
   useEffect(() => {
     async function getData() {
+      setloading(true)
       const url = `https://us-central1-summaristt.cloudfunctions.net/getBook?id=${id}`;
       const response = await fetch(url);
       const data = await response.json();
       setBooks(data);
+      setTimeout(() => {
+        setloading(false);
+      }, 2000);
     }
     getData();
   }, []);
@@ -76,7 +80,7 @@ export default function Book({ id }) {
     <>
       <SearchBar />
       <Sidebar />
-      <LoginModal/>
+      <LoginModal />
       <audio
         src={bookData?.audioLink}
         ref={(audioRef) => (durationsRef.current[bookData.id] = audioRef)}
@@ -86,6 +90,53 @@ export default function Book({ id }) {
       <div className="flex flex-col width-full md:ml-[260px] mx-8">
         <div className=" max-w-[1070px] w-full mx-auto p-2 mt-10">
           <div className=" w-full">
+
+           {loading ? (
+
+            <div className="flex flex-col lg:flex-row-reverse gap-[16px]">
+              <div className="mr-16 w-[250px] h-[300px] bg-[#959c9f]" />
+
+              <div className="flex flex-col w-[100%] max-w-[700px]">
+                <div className="my-2 w-[180px] h-[40px] bg-[#959c9f]" />
+                <div className="my-2 w-[160px] h-[20px] bg-[#959c9f]" />
+                <div className="my-2 w-[130px] h-[20px] bg-[#959c9f]" />
+                <div className="border-t border-b border-gray-300 p-4 my-6">
+                  <div className="flex flex-wrap max-w-[420px] ">
+                    <div className="flex items-center w-1/2 text-[#032b41] font-bold text-[14px]">
+                      <div className="flex h-[24px] mr-[4px] items-center">
+                        <BiStar className="w-[100%]" />
+                      </div>
+                      <div className="my-2 w-[40px] h-[20px] bg-[#959c9f]" />
+                    </div>
+                    <div className="flex items-center w-1/2 text-[#032b41] font-bold text-[14px]">
+                      <div className="flex h-[24px] mr-[4px] items-center">
+                        <AiOutlineClockCircle className="w-[100%]" />
+                      </div>
+                      <div className="my-2 w-[40px] h-[20px] bg-[#959c9f]" />
+                    </div>
+                    <div className="flex items-center w-[50%] text-[#032b41] font-bold text-[14px]">
+                      <div className="flex h-[24px] mr-[4px] items-center">
+                        <BsMic className="w-[100%]" />
+                      </div>
+                      <div className="my-2 w-[40px] h-[20px] bg-[#959c9f]" />
+                    </div>
+                    <div className="flex items-center w-[50%] text-[#032b41] font-bold text-[14px]">
+                      <div className="flex h-[24px] mr-[4px] items-center">
+                        <AiOutlineBulb className="w-[100%]" />
+                      </div>
+                      <div className="my-2 w-[40px] h-[20px] bg-[#959c9f]" />
+                    </div>
+                  </div>
+                </div>
+                {/* //buttons */}
+                <div className="flex gap-[16px] mb-[24px] ">
+                  <div className="my-2 w-[144px] h-[48px] bg-[#959c9f] rounded-[4px]" />
+                  <div className="my-2 w-[144px] h-[48px] bg-[#959c9f] rounded-[4px]" />
+                </div>
+              </div>
+            </div>
+           ) : (
+
             <div className="flex flex-col lg:flex-row-reverse gap-[16px]">
               <div className="flex max-w-[300px] min-w-[300px] max-h-[300px] justify-center">
                 <img src={bookData?.imageLink} />
@@ -198,6 +249,7 @@ export default function Book({ id }) {
                 <p>{bookData?.authorDescription}</p>
               </div>
             </div>
+           )}
           </div>
         </div>
       </div>
